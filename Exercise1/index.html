@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD</title>
+    <style>
+        body {
+            background-color: #aaa;
+        }
+        
+        #container {
+            display: flex;
+            justify-content: center;
+        }
+        #seemore{
+            display: flex;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+        }    
+        .add {
+            height: 93vh;
+            width: 300px;
+            background-color: antiquewhite;
+            position: fixed;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .add>div {
+            text-align: center;
+            color: #ffffff;
+            background-color: rgba(147, 196, 125, 1);
+            margin-bottom: 20px;
+            font-size: large;
+            padding-top: 10px;
+            height: 30px;
+            border-radius: 5px;
+        }
+        
+        .add input[type=text] {
+            width: 100%;
+            border: 2px solid #aaa;
+            border-radius: 4px;
+            margin: 8px 0;
+            outline: none;
+            padding: 8px;
+            box-sizing: border-box;
+            transition: .3s;
+        }
+        
+        .add input[type=text]:focus {
+            border-color: dodgerBlue;
+            box-shadow: 0 0 8px 0 dodgerBlue;
+        }
+ 
+        .home {
+            height: auto;
+            width: 800px;
+            top: 0px;
+            /* background-color: #fafafa; */
+            /* rgba(97, 105, 122, 0.5) */
+            display: flex;
+            flex-wrap: wrap;
+            margin-left: 350px;
+            border-radius: 10px;
+            background-color: #ffffff;
+        }
+        
+        .home .book-info {
+            background-color: rgba(147, 196, 125, 1);
+            text-align: center;
+            height: 35px;
+            font-size: large;
+            color: #ffffff;
+            position: sticky;
+            width: 780px;
+            margin: 10px 0 10px 10px;
+            border-radius: 5px;
+        }
+        
+        .home .items {
+            text-align: center;
+            width: 23%;
+            margin: 1%;
+            margin-left: 1%;
+            box-shadow: rgba(17, 17, 26, 0.2) 0px 4px 16px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 56px;
+            border-radius: 15px;
+        }
+        
+        .items>img {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .items .name,
+        .price,
+        .category {
+            text-align: start;
+            margin-left: 10px;
+            padding-top: 10px;
+        }
+        
+        .button {
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+        
+        .button #deletBtn {
+            border-radius: 5px;
+            background-color: rgb(61, 133, 198);
+            color: white;
+            border-style: outset;
+            border-color: #0066A2;
+            text-shadow: none;
+            height: 30px;
+        }
+        
+        #deletBtn {
+            margin-left: 4px;
+            background-color: rgba(239, 54, 54);
+        }
+    
+        .items>img {
+            height: 90px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <form autocomplete="off" onsubmit="onFormSubmit()">
+            <div class="add">
+                <div class="header-add">Add new book here!</div>
+
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name_book" placeholder="c programming" onclick="if(this.placeholder == 'c programming') {this.placeholder = ''}" onBlur="if(this.placeholder == '') {this.placeholder = 'c programming'}" />
+                <label for="price">Price</label>
+                <input type="text" name="price" id="price_book" placeholder="1000" onclick="if(this.placeholder == '1000') {this.placeholder = ''}" onBlur="if(this.placeholder == '') {this.placeholder = '1000'}" />
+                <label for="category">Category</label>
+                <input type="text" name="category" id="category_book" placeholder="coding" onclick="if(this.placeholder == 'coding') {this.placeholder = ''}" onBlur="if(this.placeholder == '') {this.placeholder = 'coding'}" />
+
+
+                <button type="submit" class="add_book">Add</button>
+
+
+            </div>
+        </form>
+        <div class="home" id="add_items">
+            <div class="book-info">Book</div>
+        </div>
+    </div>
+    <div id="seemore" ></div>
+
+
+        <script>
+            var selectedRow = null;
+            let x = -1;
+            var names = [];
+            var price = [];
+            var category = [];
+            let header = document.getElementsByClassName("header-add")[0];
+
+            function onFormSubmit(e) {
+                event.preventDefault();
+                var formData = readFormData();
+                if (selectedRow === null) {
+                    insertNewRecord(formData);
+                    console.log("hello")
+                }
+            }
+
+            function insertNewRecord(data) {
+                fetch('https://jsonplaceholder.typicode.com/photos')
+                    .then(response => response.json())
+                    .then(async(json) => { 
+                        for( let i=0; i<100; i++){
+                            let title=await json[i].title;
+                            let id=await json[i].id;
+                            let albumId=await json[i].albumId;
+                            let thumbnailUrl= await json[i].thumbnailUrl;
+                            document.getElementById("add_items").innerHTML +=
+                            `<div class="items">
+                                <img src="${thumbnailUrl}" alt="#">
+                                <div class="name" data="${title}"">${title}</div>
+                                <div class="price">Album ID : ${albumId} riels</div>
+                                <div class="category">Category : ${id}</div>
+                                <div class="button">
+                                    <button id="${parseInt(i)}" id="deletBtn" onclick="deleteBook(this.id)">See more</button>
+                            </div>`;
+
+                                console.log(json[i]);    
+                        }
+                        
+                    }) 
+                    
+                }
+
+
+            //Edit the data
+            function deleteBook(id) {
+                fetch('https://jsonplaceholder.typicode.com/photos')
+                    .then(response => response.json())
+                    .then(async(json) => { 
+                            let url= await json[id].url;
+                            document.getElementById("seemore").innerHTML +=
+                            `
+                                <img src="${url}" alt="#">
+                            `;
+
+                            document.getElementById("container").style.visibility = "hidden";
+                            document.getElementById("container").style.height = "0";
+                            document.getElementById("container").style.width = "0";
+                            document.getElementById("seemore").style.visibility = "visible";
+                           
+
+                                console.log(json[id].url);    
+                        }) 
+
+            }
+
+
+
+
+            console.log(insertNewRecord());
+
+
+        </script>
+
+
+
+</body>
+
+</html>
